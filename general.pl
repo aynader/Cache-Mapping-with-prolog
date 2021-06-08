@@ -47,14 +47,25 @@ tag(StringTag).
 data(MemData).
 validBit(1).
 
-getNumBits(NumOfSets,Type,Cache,BitsNum):-
+%getNumBits for Fully Associative, easy peasy.
+getNumBits(_,fullyAssoc,_,0).
+%getNumBits for Set Associative.
+getNumBits(NumOfSets,setAssoc,Cache,BitsNum).
+%getNumBits for Direct Mapping, using a helper predicate to check if the size of the Cache is a power of 2 and if not increment a variable L1 till it reaches a power of 2.
+getNumBits(_,directMap,Cache,BitsNum):-
+        length(Cache,L),
+        numBitsHelper(L,BitsNum).
+numBitsHelper(L, BitsNum):-
+        isPowerOfTwo(L),
+        logBase2(L,BitsNum).
+numBitsHelper(L,BitsNum):-
+        L1 is L + 1,
+        numBitsHelper(L1,BitsNum).
 
-%Given the number of sets NumOfSets, the cache mapping type Type and the cache Cache
-
-%Order is the decimal number representing the order of the placement of the
-%item in cache. The lower the number, the newer it is replaced with zero
-%being the least number
-
+%%%% Redo this predicate%%%%
+isPowerOfTwo(Num) :- 
+        Num is Num /\ (Num * -1).
+%%%%!!!!!!!!!!!!!!!!!!!%%%%
 
 %fillZeros/4:
 fillZeros(String,N,R):-
