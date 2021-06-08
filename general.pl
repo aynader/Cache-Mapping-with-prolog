@@ -63,8 +63,8 @@ numBitsHelper(L,BitsNum):-
         numBitsHelper(L1,BitsNum).
 
 %%%% Redo this predicate%%%%
-isPowerOfTwo(Num) :- 
-        Num is Num /\ (Num * -1).
+isPowerOfTwo(Num) :-              %<------------------------------------------
+        Num is Num /\ (Num * -1). %<------------------------------------------
 %%%%!!!!!!!!!!!!!!!!!!!%%%%
 
 %fillZeros/4:
