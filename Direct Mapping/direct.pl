@@ -101,6 +101,8 @@ convertBinToDec1([H|T],Dec,Acc):-
 convertAddress(Bin,BitsNum,Tag,Idx,directMap):- %works if bin starts with 1 i.e 1XXXXX need to fillzeros
     atom_string(Bin, SBin),
     stringToList(SBin,ListBin),
+    ListBin = [H|T],
+    H == 1,
     tagGetter(ListBin,BitsNum,ResultTagList),
     indexGetter(ListBin,BitsNum,ResultIndexList),
     listToString(ResultTagList, STag),
@@ -108,23 +110,39 @@ convertAddress(Bin,BitsNum,Tag,Idx,directMap):- %works if bin starts with 1 i.e 
     atom_number(STag, Tag),
     atom_number(SIndex, Idx).
     
+convertAddress(Bin,BitsNum,Tag,Idx,directMap):- % if bin starts with 0 this predicate is used.
+    atom_string(Bin, SBin),
+    withZerosStringGetter(SBin,BitsNum,WithZeros),
+    stringToList(WithZeros,ListBin),
+    tagGetter(ListBin,BitsNum,ResultTagList),
+    indexGetter(ListBin,BitsNum,ResultIndexList),
+    listToString(ResultTagList, STag),
+    listToString(ResultIndexList,SIndex),
+    atom_number(STag, Tag),
+    atom_number(SIndex, Idx).
 
 
-
-zerosAdder(SBin,BitsNum,WithZeros):-
+withZerosStringGetter(SBin,BitsNum,WithZeros):-  %this predicate returns a string with the appropiate number of zeros.
+    
     stringToList(SBin,ListBin),
     length(ListBin,Length),
     Length =< (2**BitsNum),
     L1 is 2**BitsNum - (Length - BitsNum),
-    fillZeros(SBin,L1,WithZeros).
+    fillZeros2(SBin,L1,WithZeros).
 
-fillZeros(String,N,R):-
-    createZeros('',N,Res),
-    string_concat(Res,String,R).
-createZeros(Result,0,Result).
-createZeros(String,Counter,Res):-
-    Counter > 0,
-    string_concat(String, "0", Res),
-    Counter1 is Counter - 1,
-    createZeros(Res,Counter1,Res).
+
+
+
+%Helper
+fillZeros2(String, NumberOfZeros, ResultFinal):-
+    stringToList(String,List),
+    zerosAdder(List,NumberOfZeros,Result),
+    listToString(Result,ResultFinal).
+%Helper of helper
+zerosAdder(List,NumberOfZeros,Result):-
+    append([0],List,Res),
+    NewN is NumberOfZeros - 1,
+    NewN > -1,
+    zerosAdder(Res,NewN,Result).
+zerosAdder(List,0,List).
 
