@@ -81,3 +81,36 @@ createZeros(String,Counter,Res):-
 
 
 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fillZeros2(String, NumberOfZeros, ResultFinal):-
+    stringToList(String,List),
+    zerosAdder(List,NumberOfZeros,Result),
+    listToString(Result,ResultFinal).
+zerosAdder(List,NumberOfZeros,Result):-
+    append([0],List,Res),
+    NewN is NumberOfZeros - 1,
+    NewN > -1,
+    zerosAdder(Res,NewN,Result).
+zerosAdder(List,0,List).
+
+% convert list of char values to integer values (1s and 0s only)
+stringToList(StringAddress,ListAddress):-
+    string_to_list(StringAddress,ListAddressChars),
+    replace_all(ListAddressChars,49,1,StringAddressReplacing),
+    replace_all(StringAddressReplacing,48,0,ListAddress).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% list to... string
+listToString(List,String):-
+    atomic_list_concat(List,String).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Predicate to convert String(binary numbers only) to List.
+replace_all([],_,_,[]).
+replace_all([X|T],X,Y,[Y|T2]) :- replace_all(T,X,Y,T2).
+replace_all([H|T],X,Y,[H|T2]) :- H \= X, replace_all(T,X,Y,T2).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
