@@ -17,10 +17,14 @@ getDataFromCache(StringAddress,Cache,Data,HopsNum,directMap,BitsNum):-
             atom_number(Tag, TagNum),
             atom_number(ResultTagString, RTagNum),
         TagNum == RTagNum,
+        %%check for validity??
+        getValidityFromItem(Item,ValidBit),
+        ValidBit == 1,
+       % getValidityFromItem(item(_,_,1,_),ValidBit).
 
     getDataFromItem(Item,Data). %returns data from the item at specified index
 
-
+    
 
 % predicate to get the index from the address as (List address -> list index).
 indexGetter(ListAddress,BitsNum,ResultIndexList):-
@@ -66,18 +70,24 @@ stringToList(StringAddress,ListAddress):-
 listToString(List,String):-
     atomic_list_concat(List,String).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+item(Tag,Data,ValidBit,Order).
 % predicate to get an item at specific index in the cache.
 getItemOnIndex(DecimalIndex,[_|T],Item):-
     NewIndex is DecimalIndex - 1,
     DecimalIndex > 0,
     getItemOnIndex(NewIndex, T, Item).
 getItemOnIndex(0,[H|T],H).
+
+%newGetItemOnIndex(DecimalIndex,Cache,item(_,_,_,Order)):-
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% predicates to get data,Tag from Item:
+% predicates to get data,Tag,ValidBit from Item:
 getDataFromItem(item(_,data(Data),_,_),Data).
 getTagFromItem(item(tag(Tag),_,_,_),Tag).
+getValidityFromItem(item(_,_,ValidBit,_),ValidBit).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % predicate to convert binary to decimal
@@ -128,13 +138,13 @@ withZerosStringGetter(SBin,BitsNum,WithZeros):-  %this predicate returns a strin
     length(ListBin,Length),
     Length =< (2**BitsNum),
     L1 is 2**BitsNum - (Length - BitsNum),
-    fillZeros2(SBin,L1,WithZeros).
+    fillZeros(SBin,L1,WithZeros).
 
 
 
 
 %Helper
-fillZeros2(String, NumberOfZeros, ResultFinal):-
+fillZeros(String, NumberOfZeros, ResultFinal):-
     stringToList(String,List),
     zerosAdder(List,NumberOfZeros,Result),
     listToString(Result,ResultFinal).
@@ -146,11 +156,57 @@ zerosAdder(List,NumberOfZeros,Result):-
     zerosAdder(Res,NewN,Result).
 zerosAdder(List,0,List).
 
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%testing%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% replaceInCache/8  -- Direct mapping
+replaceInCache(Tag,Idx,Mem,OldCache,NewCache,ItemData,
+directMap,BitsNum):-
+    string_length(Tag, TagLength),
+    N1 is 6 - BitsNum - TagLength,
+    fillZeros(Tag,N1,NewTag),
+    string_length(Idx,IdxLength),
+    N2 is BitsNum - IdxLength,
+    fillZeros(Idx,N2,NewIdx),
+    string_concat(NewTag, NewIdx, AdressBin),
+    convertBinToDec(AdressBin,Adress),
+    nth0(Adress,Mem,Data),
+    ItemData = Data,
+    convertBinToDec(NewIdx,IdxDec),
+    replaceIthItem(item(NewTag,ItemData,1,0),OldCache,IdxDec,NewCache).
+
+
+replaceIthItem(Item,[_|T],0,[Item|T]).
+replaceIthItem(Item,[H|T],Index,[H|Res]):-
+    Index > -1 ,
+    Index1 is Index - 1,
+    replaceIthItem(Item,T,Index1,Res).
+
+
+
+
 getData(StringAddress,OldCache,Mem,NewCache,Data,HopsNum,Type,BitsNum,hit):-
 getDataFromCache(StringAddress,OldCache,Data,HopsNum,Type,BitsNum),
 NewCache = OldCache.
+
 getData(StringAddress,OldCache,Mem,NewCache,Data,HopsNum,Type,BitsNum,miss):-
 \+getDataFromCache(StringAddress,OldCache,Data,HopsNum,Type,BitsNum),
 atom_number(StringAddress,Address),
 convertAddress(Address,BitsNum,Tag,Idx,Type),
 replaceInCache(Tag,Idx,Mem,OldCache,NewCache,Data,Type,BitsNum).
+
+
+runProgram([],OldCache,_,OldCache,[],[],Type,_).
+runProgram([Address|AdressList],OldCache,Mem,FinalCache,
+[Data|OutputDataList],[Status|StatusList],Type,NumOfSets):-
+getNumBits(NumOfSets,Type,OldCache,BitsNum),
+getData(Address,OldCache,Mem,NewCache,Data,HopsNum,Type,BitsNum,Status),
+runProgram(AdressList,NewCache,Mem,FinalCache,OutputDataList,StatusList,
+Type,NumOfSets).
+
+
+
