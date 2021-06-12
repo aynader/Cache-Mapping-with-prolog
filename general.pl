@@ -42,10 +42,10 @@ logBase2Helper(Num,Acc,Res):-
 
 %getNumBits/4:
 
-item(Tag,Data,ValidBit,Order).
-tag(StringTag).
-data(MemData).
-validBit(1).
+%item(Tag,Data,ValidBit,Order).
+%tag(StringTag).
+%data(MemData).
+%validBit(1).
 
 %getNumBits for Fully Associative, easy peasy.
 getNumBits(_,fullyAssoc,_,0).
