@@ -146,3 +146,11 @@ zerosAdder(List,NumberOfZeros,Result):-
     zerosAdder(Res,NewN,Result).
 zerosAdder(List,0,List).
 
+getData(StringAddress,OldCache,Mem,NewCache,Data,HopsNum,Type,BitsNum,hit):-
+getDataFromCache(StringAddress,OldCache,Data,HopsNum,Type,BitsNum),
+NewCache = OldCache.
+getData(StringAddress,OldCache,Mem,NewCache,Data,HopsNum,Type,BitsNum,miss):-
+\+getDataFromCache(StringAddress,OldCache,Data,HopsNum,Type,BitsNum),
+atom_number(StringAddress,Address),
+convertAddress(Address,BitsNum,Tag,Idx,Type),
+replaceInCache(Tag,Idx,Mem,OldCache,NewCache,Data,Type,BitsNum).

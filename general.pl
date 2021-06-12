@@ -68,26 +68,8 @@ isPowerOfTwo(Num) :-              %<------------------------------------------
 %%%%!!!!!!!!!!!!!!!!!!!%%%%
 
 %fillZeros/4:
-fillZeros(String,N,R):-
-    createZeros('',N,Res),
-    string_concat(Res,String,R).
-createZeros(Result,0,Result).
-createZeros(String,Counter,Res):-
-    Counter > 0,
-    string_concat(String, "0", Res),
-    Counter1 is Counter - 1,
-    createZeros(Res,Counter1,Res).
-
-
-
-
-
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fillZeros2(String, NumberOfZeros, ResultFinal):-
+fillZeros(String, NumberOfZeros, ResultFinal):-
     stringToList(String,List),
     zerosAdder(List,NumberOfZeros,Result),
     listToString(Result,ResultFinal).
