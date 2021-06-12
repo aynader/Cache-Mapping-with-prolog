@@ -6,7 +6,7 @@ convertBinToDec(Bin,Dec):-
     convertBinToDec1([H|T],Dec,L1).
 convertBinToDec1([],0,_).
 convertBinToDec1([H|T],Dec,Acc):-
-    Number1 is H - 48, % <---------------------- Mohamed
+    Number1 is H - 48, 
     Acc1 is Acc - 1,
     convertBinToDec1(T,Dec1,Acc1),
     pow(2,Acc,Z),

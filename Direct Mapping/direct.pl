@@ -24,8 +24,6 @@ getDataFromCache(StringAddress,Cache,Data,HopsNum,directMap,BitsNum):-
 
     getDataFromItem(Item,Data). %returns data from the item at specified index
 
-    
-
 % predicate to get the index from the address as (List address -> list index).
 indexGetter(ListAddress,BitsNum,ResultIndexList):-
     length(ListAddress,Length),
@@ -52,7 +50,6 @@ tagExtractor([H|T1],N,[H|T2]) :-
     tagExtractor(T1,M,T2).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 % Predicate to convert String(binary numbers only) to List.
 replace_all([],_,_,[]).
 replace_all([X|T],X,Y,[Y|T2]) :- replace_all(T,X,Y,T2).
@@ -77,10 +74,6 @@ getItemOnIndex(DecimalIndex,[_|T],Item):-
     DecimalIndex > 0,
     getItemOnIndex(NewIndex, T, Item).
 getItemOnIndex(0,[H|T],H).
-
-%newGetItemOnIndex(DecimalIndex,Cache,item(_,_,_,Order)):-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
