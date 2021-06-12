@@ -13,12 +13,13 @@ convertBinToDec1([H|T],Dec,Acc):-
     Dec is Number1 * Z + Dec1.
 
 % replaceIthItem/4:
+
 replaceIthItem(Item,[_|T],0,[Item|T]).
-replaceIthItem(_,List,_,List).
-replaceIthItem(Item,[H|T],I,[H|Res]):-
-    I > -1 ,
-    I1 is I - 1,
-    replaceIthItem(Item,T,I1,Res).
+replaceIthItem(Item,[H|T],Index,[H|Res]):-
+    Index > -1 ,
+    Index1 is Index - 1,
+    replaceIthItem(Item,T,Index1,Res).
+
 
 % splitEvery/3:
 splitEvery(_ , [], []).
