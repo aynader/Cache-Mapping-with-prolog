@@ -68,10 +68,11 @@ getNumBits(_,directMap,Cache,BitsNum):-
         numBitsHelper(L,BitsNum).
 numBitsHelper(L, BitsNum):-
         isPowerOfTwo(L),
-        logBase2(L,BitsNum).
+        newLogBase2(L,BitsNum),!.
 numBitsHelper(L,BitsNum):-
         L1 is L + 1,
         numBitsHelper(L1,BitsNum).
+
 
 %%%% Redo this predicate%%%%
 isPowerOfTwo(Num) :-              %<------------------------------------------

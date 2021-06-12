@@ -62,6 +62,25 @@ replace_all([X|T],X,Y,[Y|T2]) :- replace_all(T,X,Y,T2).
 replace_all([H|T],X,Y,[H|T2]) :- H \= X, replace_all(T,X,Y,T2).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %getNumBits/4:
+getNumBits(_,fullyAssoc,_,0).
+%getNumBits for Set Associative.
+getNumBits(NumOfSets,setAssoc,Cache,BitsNum).
+%getNumBits for Direct Mapping, using a helper predicate to check if the size of the Cache is a power of 2 and if not increment a variable L1 till it reaches a power of 2.
+
+getNumBits(_,directMap,Cache,BitsNum):-
+        length(Cache,L),
+        numBitsHelper(L,BitsNum).
+numBitsHelper(L, BitsNum):-
+        isPowerOfTwo(L),
+        logBase2(L,BitsNum),!.
+numBitsHelper(L,BitsNum):-
+        L1 is L + 1,
+        numBitsHelper(L1,BitsNum).
+
+%%%% Redo this predicate%%%%
+isPowerOfTwo(Num) :-      %<------------------------------------------
+Num is Num /\ (Num * -1). %<------------------------------------------
+%%%%!!!!!!!!!!!!!!!!!!!%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %getData/9
