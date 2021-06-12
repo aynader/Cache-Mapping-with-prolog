@@ -43,6 +43,7 @@ logBase2Helper(Num,Acc,Res):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 newLogBase2(2,1).
 newLogBase2(Number,Result):-
+    Number  > 2,
     log(Number,Up),
     log(2,Down),
     Result is round( Up/Down).
