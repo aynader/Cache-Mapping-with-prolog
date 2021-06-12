@@ -28,6 +28,7 @@ splitEvery(N, List, [H|T]):-
     splitEvery(N,T2,T).    
    
 % logBase2/2:
+logBase2(1,0).
 logBase2(Num,Res):-
     logBase2Helper(Num,0,Res).
 logBase2Helper(Num,Acc,Res):-
@@ -39,6 +40,13 @@ logBase2Helper(Num,Acc,Res):-
     num \= Z,
     Acc1 is Acc + 1,
     logBase2Helper(Num,Acc1,Res).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+newLogBase2(2,1).
+newLogBase2(Number,Result):-
+    log(Number,Up),
+    log(2,Down),
+    Result is round( Up/Down).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %getNumBits/4:
 
@@ -52,6 +60,7 @@ getNumBits(_,fullyAssoc,_,0).
 %getNumBits for Set Associative.
 getNumBits(NumOfSets,setAssoc,Cache,BitsNum).
 %getNumBits for Direct Mapping, using a helper predicate to check if the size of the Cache is a power of 2 and if not increment a variable L1 till it reaches a power of 2.
+
 getNumBits(_,directMap,Cache,BitsNum):-
         length(Cache,L),
         numBitsHelper(L,BitsNum).
