@@ -66,10 +66,10 @@ replace_all([H|T],X,Y,[H|T2]) :- H \= X, replace_all(T,X,Y,T2).
 getNumBits(_,fullyAssoc,_,0).
 %getNumBits for Set Associative.
 getNumBits(NumOfSets,setAssoc,Cache,BitsNum):-
-        length(Cache,L),
-        numBitsHelperAS(L,BitsNum).
-numBitsHelperAS(L,BitsNum):-
-    isPowerOfTwo(L).
+    length(Cache,Length),
+    NumberOfSetsWithItems is Length/NumOfSets,
+    logBase2(NumberOfSetsWithItems,BitsNum),
+    !.
 %getNumBits for Direct Mapping, using a helper predicate to check if the size of the Cache is a power of 2 and if not increment a variable L1 till it reaches a power of 2.
 
 getNumBits(_,directMap,Cache,BitsNum):-
@@ -212,19 +212,12 @@ withZerosStringGetter(SBin,BitsNum,WithZeros):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   SET ASSOCC   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-length1([],0).
-length1([_|Tail],N) :- length1(Tail,Prev),N is Prev+1.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-removehead([_|Tail], Tail).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 indexGetterSA(Address,SetsNum,ResultIndex):-
 	
 	stringToList(Address,Laddress),
 	logBase2(SetsNum,IdxBits),
 	Laddress = [H|T],
-	length1(Laddress,Len),
+	length(Laddress,Len),
 	Len > IdxBits,
 	removehead([H|T],X),
 	Len1 is Len -1,
@@ -238,21 +231,27 @@ indexGetterSA2(X,Length,IdxBits,Address):-
 	Length > IdxBits,
 	
 	indexGetterSA2(T,Length1,IdxBits,Address).
+
+
+removehead([_|Tail], Tail).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 tagGetterSA(ListAddress,IdxBit,Tag):-
-    length(ListAddress,Len),
-    Len1 is Len - IdxBit,
-    tagGetterSA2(ListAddress,len1,Tag).
+	without_last_n(ListAddress,IdxBit,Tag).
 
-tagGetterSA2(_,0,[]).
-tagGetterSA2([],_,[]).
-tagGetterSA2([H|T1],Length,[H|T2]) :-
-    Length > 0,
-    Mlength1 is Length-1,
-    tagGetterSA2(T1,Mlength1,T2).
+without_last_n(L, N, []) :-
+    nonvar(L), nonvar(N),
+    length(L, M),
+    N > M.
+without_last_n(L, N, R) :-
+    without_last_n_(L, N, R).
+
+without_last_n_(L, N, []) :-
+    length(L, N).
+without_last_n_([H|T], N, [H|T1]) :-
+    without_last_n_(T, N, T1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-convertAddressSA(Bin,SetsNum,Tag,Idx,setAssoc):-
+convertAddress(Bin,SetsNum,Tag,Idx,setAssoc):-
 	atom_string(Bin,StrBin),
 	stringToList(StrBin,ListBin),
 	logBase2(SetsNum,IdxBit),
@@ -262,6 +261,9 @@ convertAddressSA(Bin,SetsNum,Tag,Idx,setAssoc):-
         listToString(Index,StrIndex),
         atom_number(StrTag, NTag),
         atom_number(StrIndex, Idx).
+		
+		%%%Keep pressing and till reach value.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Replacing   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,4 +393,3 @@ setAssoc,SetsNum):-
     replaceIthItem(OldCache3,OldCache1,IdxBin,OldCache4),
     flatten(OldCache4,NewCache),
     !.
-
