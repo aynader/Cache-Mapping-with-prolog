@@ -265,6 +265,44 @@ convertAddress(Bin,SetsNum,Tag,Idx,setAssoc):-
 		%%%Keep pressing and till reach value.
 
 
+        getDataFromCache(StringAddress,Cache,Data,HopsNum,setAssoc,SetsNum):-
+
+            stringToList(StringAddress,ListAddress),
+            getLast(ListAddress,SetsNum,ResultListIndex), %index getter
+            tagGetterSA(ListAddress,SetsNum,Tag),
+        
+        
+            listToString(Tag,StringTag),
+            atom_string(StringTag, StringTag2),
+            listToString(ListIndex,StrIdx),
+            convertBinToDec(StrIdx,DecIdx),
+            length(Cache, Len),
+            NumOfItems is Len/ SetsNum,
+            splitEvery(NumOfItems,Cache,NewCache),
+            nth0(DecIdx,NewCache,SetFromCache),
+            
+            HopsNum is DecimalIndex - 1,
+            listToString(Tag,StrTag),
+            tagOfItem(Item,ITag),
+            atom_number(ITag, ITagNum),
+            atom_number(StrTag,TagNum),
+            ITagNum == TagNum,
+            dataOfItem(Item,Data).
+
+
+        tagOfItem(item(tag(Tag),_,_,_),Data).
+        dataOfItem(item(_,data(Data),_,_),Data).
+
+        getLast(ListAddress,SetNum,ResultIndex):-
+            length(ListAddress,Length),
+            logBase2(SetNum, IdxSize),
+            Pos is Length - IdxSize,
+            getLastHelper(ListAddress, Pos, ResultIndex).
+        
+        getLastHelper([_|T],Pos, ListAddress):-
+            Pos2 is Pos - 1,
+            getLastHelper(T,Pos2,ListAddress).
+        getLastHelper(ListAddress,0,ListAddress).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Replacing   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
