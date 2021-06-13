@@ -319,11 +319,10 @@ _):-
     nth0(TagDec,Mem,Data),
     ItemData = Data,
     string_length(Tag, TagLength),
-    NumberOfZeros = 6 - TagLength,
+    NumberOfZeros is 6 - TagLength,
     fillZeros(Tag,NumberOfZeros,NewTag),
     atom_string(NewTag,T),
-    replaceIthItem(item(tag(T),data(Data),1,0),OldCache1,Index,NewCache),
-    !.
+    replaceIthItem(item(tag(T),data(Data),1,0),OldCache1,Index,NewCache).
 replaceInCache(Tag,_,Mem,OldCache,NewCache,ItemData,fullyAssoc,
 _):-
     increment(OldCache,OldCache1),
@@ -335,11 +334,10 @@ _):-
     nth0(TagDec,Mem,Data),
     ItemData = Data,
     string_length(Tag, TagLength),
-    NumberOfZeros = 6 - TagLength,
+    NumberOfZeros is 6 - TagLength,
     fillZeros(Tag,NumberOfZeros,NewTag),
     atom_string(NewTag,T),
-    replaceIthItem(item(tag(T),data(Data),1,0),OldCache1,Index,NewCache),
-    !.
+    replaceIthItem(item(tag(T),data(Data),1,0),OldCache1,Index,NewCache).
 
 % replaceInCache/8 -- Set Assoc.
 findWhereToReplace(L,Index):-
@@ -367,8 +365,7 @@ replaceInCache(Tag,Idx,Mem,OldCache,NewCache,ItemData,setAssoc,SetsNum):-
     findWhereToReplace(OldCacheIncr,Index),
     replaceIthItem(item(T,Data,1,0),OldCacheIncr,Index,OldCache3),
     replaceIthItem(OldCache3,OldCache1,IdxBin,OldCache4),
-    flatten(OldCache4,NewCache),
-    !.
+    flatten(OldCache4,NewCache).
 
 replaceInCache(Tag,Idx,Mem,OldCache,NewCache,ItemData,
 setAssoc,SetsNum):-
@@ -391,5 +388,4 @@ setAssoc,SetsNum):-
     findFirstInvalid(OldCacheIncr,Index),
     replaceIthItem(item(tag(T),data(Data),1,0),OldCacheIncr,Index,OldCache3),
     replaceIthItem(OldCache3,OldCache1,IdxBin,OldCache4),
-    flatten(OldCache4,NewCache),
-    !.
+    flatten(OldCache4,NewCache).
