@@ -27,6 +27,7 @@ splitEvery(N, List, [H|T]):-
     splitEvery(N,T2,T).
 
 % logBase2/2:
+logBase2(1,0).
 logBase2(2,1).
 logBase2(Number,Result):-
     Number  > 2,
@@ -214,5 +215,5 @@ replaceInCache(Tag,Idx,Mem,OldCache,NewCache,ItemData,directMap,BitsNum):-
     nth0(Adress,Mem,Data),
     ItemData = Data,
     convertBinToDec(NewIdx,IdxDec),
-    replaceIthItem(item(NewTag,ItemData,1,0),OldCache,IdxDec,NewCache).
+    replaceIthItem(item(tag(NewTag),ItemData,1,0),OldCache,IdxDec,NewCache).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
